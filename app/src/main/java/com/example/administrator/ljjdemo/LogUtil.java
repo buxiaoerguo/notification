@@ -28,7 +28,8 @@ public class LogUtil {
     private static final String LOG_FILE = LogManager.getInstance().getLogFilePath();
 
     private static LogUtil mInstance = null;
-    private static int LOG_LEVEL = NO_LOG;
+//    private static int LOG_LEVEL = NO_LOG;
+    private static int LOG_LEVEL = VERBOSE;
     private static boolean logFileEnable = true;
 
     static {
@@ -152,10 +153,10 @@ public class LogUtil {
 
     // error
     public static void e(String tag, String msg) {
-//        if (ERROR < LOG_LEVEL)
-//            return;
-//        if (msg == null)
-//            return;
+        if (ERROR < LOG_LEVEL)
+            return;
+        if (msg == null)
+            return;
         Log.e(tag, msg);
         write("ERROR", getInstance().getPrefixName(), msg);
     }

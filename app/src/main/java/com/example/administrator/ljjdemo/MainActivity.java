@@ -1,102 +1,105 @@
 package com.example.administrator.ljjdemo;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
-import android.os.Environment;
+import android.graphics.PixelFormat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.RemoteViews;
+import android.widget.LinearLayout.LayoutParams;
 
 public class MainActivity extends AppCompatActivity {
-    /**
-     * 主路径
-     */
-    private static final String MAIN_DIR = Environment.getExternalStorageDirectory() + "/AAA_mesh/LogUtil";
-
-    /**
-     * 保存Log的文件
-     */
-    private static final String LOG_FILE = MAIN_DIR + "/log.txt";
-
-    private final static String LOG_FOR_QA = "[log4qa] ";
-    private final static String LOG_FOR_DADIAN = "[log4dadian] ";
-    /**
-     * 通知栏Notification
-     */
-    private NotificationManager mManager;
-    private Notification mNotification;
-    private PendingIntent mIntent;
-    private String cll;
-    Button btn_send;
+    Button btn_send,btn_send2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        cll = "test!";
-//        ButterKnife.bind(this);
-        init();
-        LogManager.getInstance().init(LOG_FILE);
 
-        LogUtil.e("start");
-        LogUtil.e(LOG_FILE,"start");
         btn_send =findViewById(R.id.btn_send);
         btn_send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-             show();
+                NotificationUtil notificationUtils = new NotificationUtil(MainActivity.this);
+                notificationUtils.sendNotification("Testsss", "测试sss",1);
                 LogUtil.e("show");
             }
         });
-    }
-    private void init() {
-        //初始化通知栏管理者
-        mManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        btn_send2 =findViewById(R.id.btn_send2);
+        btn_send2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NotificationUtil notificationUtils = new NotificationUtil(MainActivity.this);
+                notificationUtils.sendNotification("Test", "测试",2);
+            }
+        });
 
-        //意图数组
-        Intent[] intents = {new Intent(this, NotificationAcitivity.class)};
-        //待处理意图对象
-        mIntent = PendingIntent.getActivities(this, 0, intents, 0);
-        //消息栏通知对象
-        mNotification = new Notification();
     }
-    public void show() {
-        //设置在通知栏的消息图标
-        mNotification.icon = R.mipmap.ic_launcher_round;
-        //设置在通知栏的信息内容
-        mNotification.tickerText = "重大消息";
-        //设置默认的声音,此外还可以设置震动（需加入权限）
-        mNotification.defaults = Notification.DEFAULT_SOUND;
-        //添加灯光
-// mNotification.defaults=Notification.DEFAULT_LIGHTS;
-        //不能删除
-        mNotification.flags = Notification.FLAG_NO_CLEAR;
-        //设置下拉时的显示布局
-        RemoteViews convertView = new RemoteViews(getPackageName(), R.layout.layout_content);
-        convertView.setImageViewResource(R.id.img, R.mipmap.ic_launcher);
-        convertView.setTextViewText(R.id.txt, cll);
-        mNotification.contentView = convertView;
-        mNotification.contentIntent = mIntent;
-        //发送通知
-        // 第一个参数唯一的标识该Notification，第二个参数就是Notification对象
-        mManager.notify(1, mNotification);
-    }
+
+
+
+//    WindowManager wm;
+//    WindowManager.LayoutParams params;
+//    private void initWindowManager(){
+// wm = (WindowManager) getApplicationContext().getSystemService(
+//     Context.WINDOW_SERVICE);
+// params = new WindowManager.LayoutParams();
+// // 设置window type
+// params.type = WindowManager.LayoutParams.TYPE_PHONE;
+// /*
+//  * 如果设置为params.type = WindowManager.LayoutParams.TYPE_PHONE; 那么优先级会降低一些,
+//  * 即拉下通知栏不可见
+//  */
+// params.format = PixelFormat.RGBA_8888; // 设置图片格式，效果为背景透明
+// // 设置Window flag
+// params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+//     | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+//     | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
+// /*
+//  * 下面的flags属性的效果形同“锁定”。 悬浮窗不可触摸，不接受任何事件,同时不影响后面的事件响应。
+//  * wmParams.flags=LayoutParams.FLAG_NOT_TOUCH_MODAL |
+//  * LayoutParams.FLAG_NOT_FOCUSABLE | LayoutParams.FLAG_NOT_TOUCHABLE;
+//  */
+// // 设置悬浮窗的长得宽
+// params.width = wm.getDefaultDisplay().getWidth();
+// params.height = 200;
+// params.gravity = Gravity.LEFT | Gravity.TOP;}
+//private void createFloatView(String str) {
+// if (btn_floatView == null){
+//   btn_floatView = new Button(getApplicationContext());
+//   wmTag = true;
+// }
+// btn_floatView.setText(str);
+// Log.i(TAG, "createFloatView: "+str);
+// // 设置悬浮窗的Touch监听
+// btn_floatView.setOnTouchListener(new View.OnTouchListener() {
+//   int lastX, lastY;
+//   int paramX, paramY;
+//   public boolean onTouch(View v, MotionEvent event) {
+//     switch (event.getAction())
+//     {
+//       case MotionEvent.ACTION_DOWN:
+//         if (MainActivity.lifeTag == 1) {
+//           Intent intent = new Intent(DataService.this, MainActivity.class);
+//           startActivity(intent);
+//         }
+//         wm.removeViewImmediate(btn_floatView);
+//         btn_floatView = null;
+//         break;
+//       case MotionEvent.ACTION_MOVE:
+//         break;
+//     }
+//     return true;
+//   }
+// });
+// if (wmTag){
+//   wm.addView(btn_floatView, params);
+//   wmTag = false;
+// }else {
+//   wm.updateViewLayout(btn_floatView,params);
+// } }
 }
-//public class MainActivity extends AppCompatActivity {
-//
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
-//
-//    }
-//    @Override
-//    public void onContentChanged() {
-//        super.onContentChanged();
-//        init();
-//    }
-//
-//    @OnClick(R.id.btn_create)
